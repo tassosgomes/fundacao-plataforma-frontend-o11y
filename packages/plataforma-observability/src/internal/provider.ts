@@ -5,7 +5,7 @@ import {
 } from '@opentelemetry/sdk-trace-web'
 import type { Resource } from '@opentelemetry/resources'
 import type { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
-import type { InstrumentationOption } from '@opentelemetry/instrumentation'
+import type { Instrumentation } from '@opentelemetry/instrumentation'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 
 const TRACER_NAME = '@ECADBR/plataforma-observability'
@@ -16,7 +16,7 @@ let providerInstance: WebTracerProvider | null = null
 export type ProviderInitOptions = {
   resource: Resource
   exporter: OTLPTraceExporter
-  instrumentations: InstrumentationOption[]
+  instrumentations: Instrumentation[]
 }
 
 /**

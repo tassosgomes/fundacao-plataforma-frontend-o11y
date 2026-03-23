@@ -1,4 +1,4 @@
-import { SpanStatusCode, type Span } from '@opentelemetry/api'
+import type { Span } from '@opentelemetry/api'
 import { getTracer } from '../internal/provider'
 import { mergeContextAttributes } from '../internal/contextStore'
 import type { SpanAttributes } from '../types/span'

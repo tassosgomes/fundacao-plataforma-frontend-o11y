@@ -2,7 +2,7 @@ import { Resource } from '@opentelemetry/resources'
 import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
-  ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
+  SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from '@opentelemetry/semantic-conventions'
 import type { ObservabilityConfig } from '../types/config'
 
@@ -14,6 +14,6 @@ export function createResource(config: ObservabilityConfig): Resource {
   return new Resource({
     [ATTR_SERVICE_NAME]: config.serviceName,
     [ATTR_SERVICE_VERSION]: config.serviceVersion ?? 'unknown',
-    [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: config.environment,
+    [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: config.environment,
   })
 }

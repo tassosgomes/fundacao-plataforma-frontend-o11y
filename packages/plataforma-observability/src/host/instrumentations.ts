@@ -1,11 +1,8 @@
 import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load'
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch'
 import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request'
-import type { InstrumentationOption } from '@opentelemetry/instrumentation'
+import type { Instrumentation } from '@opentelemetry/instrumentation'
 import type { InstrumentationOptions } from '../types/config'
-
-/** Lista de headers de autenticação que NÃO devem ser capturados. */
-const SENSITIVE_HEADERS = ['authorization', 'cookie', 'x-api-key']
 
 /**
  * Cria a lista de instrumentações automáticas com base na config.
@@ -13,14 +10,14 @@ const SENSITIVE_HEADERS = ['authorization', 'cookie', 'x-api-key']
  */
 export function createInstrumentations(
   options: InstrumentationOptions = {},
-): InstrumentationOption[] {
+): Instrumentation[] {
   const {
     documentLoad = true,
     fetch: enableFetch = true,
     xhr = true,
   } = options
 
-  const instrumentations: InstrumentationOption[] = []
+  const instrumentations: Instrumentation[] = []
 
   if (documentLoad) {
     instrumentations.push(new DocumentLoadInstrumentation())
