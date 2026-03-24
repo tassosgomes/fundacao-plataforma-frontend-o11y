@@ -1,23 +1,44 @@
 import type { MfeContext, RouteContext } from '../types/context'
 import type { SpanAttributes } from '../types/span'
 
-let currentMfeContext: MfeContext | null = null
-let currentRouteContext: RouteContext | null = null
+type ContextState = {
+  currentMfeContext: MfeContext | null
+  currentRouteContext: RouteContext | null
+}
+
+const CONTEXT_STORE_KEY = '__ECADBR_PLATAFORMA_OBSERVABILITY_CONTEXT__'
+
+function getContextStore(): ContextState {
+  const runtime = globalThis as typeof globalThis & {
+    [CONTEXT_STORE_KEY]?: ContextState
+  }
+
+  if (!runtime[CONTEXT_STORE_KEY]) {
+    runtime[CONTEXT_STORE_KEY] = {
+      currentMfeContext: null,
+      currentRouteContext: null,
+    }
+  }
+
+  return runtime[CONTEXT_STORE_KEY]
+}
 
 export function setCurrentMfeContext(ctx: MfeContext): void {
-  currentMfeContext = { ...ctx }
+  const store = getContextStore()
+  store.currentMfeContext = { ...ctx }
 }
 
 export function setCurrentRouteContext(ctx: RouteContext): void {
-  currentRouteContext = { ...ctx }
+  const store = getContextStore()
+  store.currentRouteContext = { ...ctx }
 }
 
 export function getCurrentMfeContext(): MfeContext | null {
-  return currentMfeContext
+  return getContextStore().currentMfeContext
 }
 
 export function getCurrentRouteContext(): RouteContext | null {
-  return currentRouteContext
+  return getContextStore().currentRouteContext
 }
 
 /**
@@ -27,6 +48,7 @@ export function getCurrentRouteContext(): RouteContext | null {
 export function mergeContextAttributes(
   explicit: SpanAttributes = {},
 ): Record<string, string | number | boolean> {
+  const { currentMfeContext, currentRouteContext } = getContextStore()
   const merged: Record<string, string | number | boolean> = {}
 
   // Contexto de rota (menor precedência)
@@ -57,6 +79,7 @@ export function mergeContextAttributes(
  * @internal
  */
 export function _resetContextStore(): void {
-  currentMfeContext = null
-  currentRouteContext = null
+  const store = getContextStore()
+  store.currentMfeContext = null
+  store.currentRouteContext = null
 }

@@ -1,4 +1,4 @@
-import { SpanStatusCode } from '@opentelemetry/api'
+import { context, SpanStatusCode, trace } from '@opentelemetry/api'
 import { createSpan } from './createSpan'
 import type { SpanAttributes } from '../types/span'
 
@@ -27,9 +27,10 @@ export async function withSpan<T>(
   fn: () => Promise<T> | T,
 ): Promise<T> {
   const span = createSpan(name, attributes)
+  const spanContext = trace.setSpan(context.active(), span)
 
   try {
-    const result = await fn()
+    const result = await context.with(spanContext, fn)
     span.setStatus({ code: SpanStatusCode.OK })
     return result
   } catch (error) {

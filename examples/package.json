@@ -1,0 +1,42 @@
+{
+  "name": "plataforma-observability-examples",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "host-app",
+    "mfe-clientes",
+    "mfe-pagamentos",
+    "backend-api"
+  ],
+  "scripts": {
+    "dev": "npm run build:remotes && concurrently -n host,clientes,pagamentos,backend -c cyan,green,magenta,yellow \"npm run dev:host:federated\" \"npm run preview:clientes\" \"npm run preview:pagamentos\" \"npm run dev:backend\"",
+    "dev:host:federated": "VITE_MFE_CLIENTES_REMOTE_URL=http://localhost:4271/assets/remoteEntry.js VITE_MFE_PAGAMENTOS_REMOTE_URL=http://localhost:4272/assets/remoteEntry.js npm run dev -w host-app",
+    "dev:host": "npm run dev -w host-app",
+    "dev:clientes": "VITE_MFE_CLIENTES_API_BASE_URL=http://localhost:4319 npm run dev -w mfe-clientes",
+    "dev:pagamentos": "npm run dev -w mfe-pagamentos",
+    "dev:backend": "npm run dev -w backend-api",
+    "build:remotes": "VITE_MFE_CLIENTES_API_BASE_URL=http://localhost:4319 npm run build -w mfe-clientes && npm run build -w mfe-pagamentos",
+    "build": "npm run build -w host-app && VITE_MFE_CLIENTES_API_BASE_URL=http://localhost:4319 npm run build -w mfe-clientes && npm run build -w mfe-pagamentos && npm run build -w backend-api",
+    "preview:host": "npm run preview -w host-app",
+    "preview:clientes": "npm run preview -w mfe-clientes",
+    "preview:pagamentos": "npm run preview -w mfe-pagamentos",
+    "start:backend": "npm run start -w backend-api"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3"
+  },
+  "devDependencies": {
+    "@originjs/vite-plugin-federation": "^1.4.1",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.7.0",
+    "vite": "^7.0.3"
+  }
+}

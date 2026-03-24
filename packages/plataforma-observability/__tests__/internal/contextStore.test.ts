@@ -142,5 +142,12 @@ describe('contextStore', () => {
       _resetContextStore()
       expect(mergeContextAttributes()).toEqual({})
     })
+
+    it('reusa o mesmo store global entre chamadas diferentes', () => {
+      setCurrentRouteContext({ appRoute: '/global-route' })
+
+      expect(getCurrentRouteContext()).toEqual({ appRoute: '/global-route' })
+      expect(mergeContextAttributes()).toEqual({ 'app.route': '/global-route' })
+    })
   })
 })

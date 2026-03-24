@@ -1,0 +1,20 @@
+{
+  "segment": "enterprise",
+  "customers": [
+    {
+      "id": "cl-100",
+      "nome": "Editora Aurora",
+      "status": "ativo"
+    },
+    {
+      "id": "cl-101",
+      "nome": "Galeria Linha Fina",
+      "status": "ativo"
+    },
+    {
+      "id": "cl-102",
+      "nome": "Estúdio Margem Sul",
+      "status": "monitorado"
+    }
+  ]
+}

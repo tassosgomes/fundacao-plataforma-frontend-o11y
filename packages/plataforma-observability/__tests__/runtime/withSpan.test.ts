@@ -1,6 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { SpanStatusCode } from '@opentelemetry/api'
 
+const { mockContextWith, mockSetSpan } = vi.hoisted(() => ({
+  mockContextWith: vi.fn(),
+  mockSetSpan: vi.fn(),
+}))
+
+vi.mock('@opentelemetry/api', async () => {
+  const actual = await vi.importActual<typeof import('@opentelemetry/api')>(
+    '@opentelemetry/api',
+  )
+
+  return {
+    ...actual,
+    context: {
+      ...actual.context,
+      active: vi.fn(() => 'active-context'),
+      with: mockContextWith,
+    },
+    trace: {
+      ...actual.trace,
+      setSpan: mockSetSpan,
+    },
+  }
+})
+
 vi.mock('../../src/runtime/createSpan', () => ({
   createSpan: vi.fn(),
 }))
@@ -18,6 +42,8 @@ describe('withSpan', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(createSpan).mockReturnValue(mockSpan as any)
+    mockSetSpan.mockReturnValue('span-context')
+    mockContextWith.mockImplementation(async (_context, fn) => fn())
   })
 
   it('executa a função fornecida', async () => {
@@ -46,6 +72,16 @@ describe('withSpan', () => {
     const attributes = { feature: 'clientes', operation: 'salvar' }
     await withSpan('ui.action.salvar', attributes, vi.fn().mockResolvedValue(undefined))
     expect(createSpan).toHaveBeenCalledWith('ui.action.salvar', attributes)
+  })
+
+  it('executa a funcao dentro do contexto ativo do span', async () => {
+    const fn = vi.fn().mockResolvedValue('resultado')
+
+    await withSpan('meu-span', {}, fn)
+
+    expect(mockSetSpan).toHaveBeenCalledWith('active-context', mockSpan)
+    expect(mockContextWith).toHaveBeenCalledOnce()
+    expect(mockContextWith).toHaveBeenCalledWith('span-context', fn)
   })
 
   it('re-lança o erro em caso de falha', async () => {

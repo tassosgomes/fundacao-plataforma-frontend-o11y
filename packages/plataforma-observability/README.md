@@ -10,6 +10,10 @@ Biblioteca padronizada de observabilidade frontend baseada em OpenTelemetry, pro
 
 A biblioteca encapsula toda a configuração do OpenTelemetry Web SDK, expõe uma API enxuta para instrumentação manual e garante que o SDK seja inicializado uma única vez pelo Host, enquanto os MFEs consomem o tracer global sem nenhuma configuração adicional.
 
+## Demo distribuida
+
+Existe uma demo executável em [examples/README.md](/home/tsgomes/github-tassosgomes/fundacao-plataforma-frontend-o11y/examples/README.md) mostrando o cenário Host + MFEs e, adicionalmente, um backend Node instrumentado que continua o `traceparent` recebido do browser para visualização de trace distribuído no Jaeger.
+
 ## Instalação
 
 ```bash
@@ -312,6 +316,21 @@ initObservability({
 ```bash
 docker compose -f docker/docker-compose.yml down
 ```
+
+## Aplicação de exemplo
+
+O repositório inclui uma aplicação executável de referência em `examples/`, com um Host e dois MFEs consumindo a biblioteca em cenário real de Module Federation.
+
+Essa demo cobre:
+
+- `initObservability()` no Host
+- `setRouteContext()` em navegação
+- `setMfeContext()` nos remotes
+- spans manuais com `createSpan()` e `withSpan()`
+- `recordError()` para falhas controladas
+- visualização local no Jaeger
+
+Para executar, siga o guia em `examples/README.md` na raiz do repositório.
 
 ---
 
